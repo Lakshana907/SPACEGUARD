@@ -1,254 +1,212 @@
+<div align="center">
+
 🛰️ SPACEGUARD
-
 AI-Powered Space-Debris Collision Early-Warning System
+IBM Datathon 2026 · Event Code: SSF2026
 
-IBM Datathon 2026 ·
-*From tracking objects in orbit to understanding which encounters need
-attention first.*
-:::🌍 The mission
-Earth's orbit is becoming more crowded with active satellites and space
-debris. A high-speed collision can damage valuable spacecraft and create
-additional fragments, making future collisions more likely. This
-cascading risk is often discussed as Kessler Syndrome.
-Traditional tracking views can show where objects are. SPACEGUARD
-focuses on the next question:
-Which satellite--debris encounters should be reviewed first, and
-why?
 
-SPACEGUARD is a full-stack prototype that turns sample orbital encounter
-data into an easy-to-understand risk dashboard with a 3D orbital view,
-prioritized encounters, and configurable alerts.
-\(!IMPORTANT\) Prototype status: The current version uses
-synthetic demonstration data and a transparent heuristic risk score.
-It does not yet use a trained/validated AI model, live orbital data,
-or operational collision probabilities. Do not use it to make real
-spacecraft manoeuvre or collision-avoidance decisions.
 
-✨ Explore the features
-  Feature                 What it does            Why it matters
-  🌐 3D orbital         Displays an animated    Makes orbital activity
-  visualization         Earth, orbit paths, and easier to explore
-                          object markers          visually
-  🎯 Encounter          Ranks sample encounters Helps users focus on
-  prioritization        using a demo risk index higher-scoring cases
-                                                  first
-  🚨 Alert threshold  Filters encounters that Demonstrates how an
-                          exceed a configurable   early-warning workflow
-                          score                   could work
-  🧪 Scenario           Switches between low,   Lets reviewers see how
-  simulator             elevated, and critical  the dashboard responds
-                          demo conditions         to changing scenarios
-  🧭 Risk               Shows encounter details Makes the result easier
-  explanations          and factors used by the to interpret
-                          demo scoring logic      
-  🧑‍🚀 Beginner-friendly  Provides a login-style  Helps non-specialists
-  experience            welcome screen and      understand the purpose
-                          simple explanations     of the system
-  🔌 REST API         Serves summary metrics, Separates the interface
-                          encounters, alerts, and from backend logic
-                      scenario changes        
-🧠 How SPACEGUARD works
+
+
+From tracking objects in orbit to understanding which encounters need
+attention first.
+</div>
+
+🌍 Overview
+Earth’s orbit is becoming more crowded with active satellites and space
+debris. A high-speed collision can damage spacecraft and generate
+additional fragments, increasing the risk of further collisions—a
+cascading problem commonly associated with Kessler Syndrome.
+SPACEGUARD is a full-stack prototype that demonstrates how orbital
+encounter data can be turned into understandable risk information. It
+combines a 3D orbital view, prioritized encounters, risk indicators, and
+configurable alerts in one dashboard.
+\(!IMPORTANT\) Prototype limitation: This version uses simulated
+orbital data and a heuristic risk score. It does not yet use a trained
+and validated AI model, live orbital data, or operational collision
+probabilities. It must not be used to make real spacecraft manoeuvre
+or collision-avoidance decisions.
+
+🎯 The problem
+Tracking systems help show where objects are, but users also need help
+deciding which encounters deserve attention first. SPACEGUARD
+demonstrates a workflow for prioritizing potentially dangerous
+satellite–debris encounters and making risk information easier to
+understand.
+💡 How SPACEGUARD works
+1. Load sample encounters from the bundled demonstration data.
+2. Assess the sample parameters using the backend’s current
+   heuristic scoring logic.
+3. Prioritize encounters in the dashboard by their demonstration
+   risk score.
+4. Raise demo alerts when a score crosses the selected threshold.
+5. Explore scenarios to see how low, elevated, and critical demo
+   conditions change the dashboard.
+✨ Key features
+Feature	What you can do
+🌐 Interactive 3D orbit	Explore an animated Earth, orbital paths, and object markers
+🎯 Risk overview	Review summary indicators and prioritized sample encounters
+🚨 Alert threshold	Adjust the threshold used to display alerts
+🧪 Scenario controls	Switch between low, elevated, and critical demonstration scenarios
+🔎 Risk details	Inspect encounter information and the factors used by the demo scoring logic
+🧭 Beginner-friendly UI	Explore a welcome/login-style screen and simple explanations
+🔌 REST API	Retrieve summary metrics, encounters, alerts, and scenario updates
+
+
+🏗️ Architecture
 ```mermaid
 flowchart TD
-    A["Synthetic orbital encounter data"] --> B["FastAPI backend"]
-    B --> C["Heuristic risk-scoring function"]
-    C --> D["Risk score and demo risk category"]
-    D --> E["Prioritized encounter list"]
-    D --> F["Alert threshold filter"]
+    A["Synthetic orbital data"] --> B["FastAPI backend"]
+    B --> C["Heuristic risk scoring"]
+    C --> D["Risk score and demo category"]
+    D --> E["Prioritized encounters"]
+    D --> F["Threshold-based alerts"]
     E --> G["React dashboard"]
     F --> G
     G --> H["Interactive 3D orbital view"]
-    G --> I["Scenario controls and risk details"]
+    G --> I["Scenario controls and encounter details"]
 ```
-1. Load sample encounters --- the prototype starts with bundled
-   demonstration records.
-2. Evaluate the sample parameters --- the backend applies its
-   current heuristic scoring logic.
-3. Prioritize encounters --- the dashboard presents higher-scoring
-   cases for review.
-4. Check the alert threshold --- encounters meeting the selected
-   threshold appear in the alert view.
-5. Explore scenarios --- change the demo scenario to observe how
-   the displayed results change.
 🧰 Technology stack
-<details>
-<summary>
-<strong>{=html}Frontend</strong>{=html} --- click to expand
-</summary>
-- React --- user interface components
-- TypeScript --- typed frontend code
-- Vite --- local development server and production build
-- Three.js --- 3D graphics
-- React Three Fiber --- React renderer for Three.js
-- Drei --- helper components for React Three Fiber
-- CSS --- dashboard layout and styling
-</details>
-<details>
-<summary>
-<strong>{=html}Backend</strong>{=html} --- click to expand
-</summary>
-- Python --- backend language
-- FastAPI --- REST API and application logic
-- Uvicorn --- ASGI server used to run the API
-- pytest --- backend test framework
-See frontend/package.json and backend/requirements.txt for the
-project's dependency declarations.
-</details>
-<details>
-<summary>
-<strong>{=html}Planned platform</strong>{=html} --- IBM LinuxONE
-</summary>
-IBM LinuxONE is a planned deployment target, not a current
-integration. Its enterprise-oriented security, resilience, and
-scalability make it worth evaluating for hosting the API and future
-data-processing services. Actual deployment requires access to an
-environment, dependency compatibility checks, configuration, and
-testing.
-Deployment notes are in
-[`linuxone/DEPLOYMENT.md`](linuxone/DEPLOYMENT.md).
-</details>
-🏗️ Architecture
-```mermaid
-flowchart LR
-    U["User / Reviewer"] --> FE["React + TypeScript + Vite"]
-    FE <-->|"HTTP / JSON"| API["FastAPI"]
-    API --> R["Risk engine"]
-    API --> DATA["Synthetic demo records"]
-    R --> API
-    API --> FE
-```
-The frontend and backend run as separate local processes. The UI
-requests data from FastAPI, while the backend provides demo records,
-scenario switching, and heuristic risk calculations.
-🚀 Run it locally
+Technology	Role in SPACEGUARD
+React	Builds the frontend user interface
+TypeScript	Adds types to frontend code
+Vite	Runs the development server and builds the frontend
+Three.js	Provides 3D graphics
+React Three Fiber	Connects Three.js rendering with React
+Drei	Provides helper components for React Three Fiber
+CSS	Styles the dashboard
+Python	Backend language
+FastAPI	Provides REST endpoints and backend logic
+Uvicorn	Runs the FastAPI application
+pytest	Backend testing framework
+IBM LinuxONE	Planned deployment platform; not currently integrated
+
+
+For exact dependency versions, see
+[`frontend/package.json`](frontend/package.json) and
+[`backend/requirements.txt`](backend/requirements.txt).
+🚀 Run locally
 Requirements
 - Git
 - Node.js and npm
 - Python 3.10 or later
-- VS Code (or another editor)
-1. Get the code
-git clone https://github.com/Lakshana907/SPACEGUARD.git
+- VS Code or another code editor
+1. Clone the repository
+git clone
 cd SPACEGUARD
-Or download the ZIP from GitHub and extract it.
+Alternatively, download the ZIP from GitHub and extract it.
 2. Start the backend
-Open Terminal 1 in the project root.
-Windows PowerShell
+Open a terminal at the project root.
+Windows PowerShell:
 cd backend
 py -m venv .venv
 .\.venv\Scripts\Activate.ps1
 pip install -r requirements.txt
 uvicorn app.main:app --reload --port 8000
-If PowerShell blocks activation, run this in the same terminal, then
-retry activation:
+If PowerShell blocks virtual-environment activation, run this in the
+same terminal and try activation again:
 Set-ExecutionPolicy -Scope Process Bypass
 .\.venv\Scripts\Activate.ps1
-Keep this terminal open.
+Keep the backend terminal open.
 3. Start the frontend
-Open Terminal 2 at the project root:
+Open a second terminal at the project root:
 cd frontend
 npm install
 npm run dev
-Open the URL shown in the terminal, usually http://localhost:5173.
-Terminal tip: If your terminal is already inside frontend, do
-not run cd frontend again.
+Open the URL printed by Vite, usually <>.
+If your terminal is already inside the frontend folder, do not run
+cd frontend again.
 
-4. Check the backend
-  Resource               Local URL
-  API root               http://127.0.0.1:8000/
-  Health check           http://127.0.0.1:8000/health
-  Interactive API docs   http://127.0.0.1:8000/docs
+4. Useful local URLs
+Service	URL
+Frontend	
+Backend API	
+Backend health check	
+Interactive API documentation	
+
+
 5. Build and test
-Frontend production build:
+Build the frontend from the project root:
 cd frontend
 npm run build
-Backend tests (from the project root, with the backend environment
-activated):
+Run backend tests from the project root with the backend virtual
+environment active:
 cd backend
 py -m pytest
-If pytest is not installed, install it in the active environment with
-py -m pip install pytest.
-🔗 API reference
-  Method                  Endpoint                     Purpose
-  GET                   /                          API welcome/status
-                                                       response
-  GET                   /health                    Health check
-  GET                   /api/summary               Dashboard summary
-                                                       metrics
-  GET                   /api/encounters            Sample encounter
-                                                       records and risk
-                                                       information
-  GET                   /api/alerts?threshold=65   Alerts above the
-                                                       requested threshold
-  POST                  /api/scenarios/low         Load the low-risk demo
-                                                       scenario
-  POST                  /api/scenarios/elevated    Load the elevated-risk
-                                                       demo scenario
-  POST                  /api/scenarios/critical    Load the critical-risk
-                                                   demo scenario
-For exact request/response schemas, run the backend and open FastAPI
-Swagger docs.
-📊 Understanding the risk score
+If pytest is not installed, run py -m pip install pytest in the active
+environment.
+🔌 API endpoints
+Method	Endpoint	Purpose
+GET	/	API status response
+GET	/health	Health check
+GET	/api/summary	Dashboard summary metrics
+GET	/api/encounters	Sample encounters and risk information
+GET	/api/alerts?threshold=65	Alerts above the selected threshold
+POST	/api/scenarios/low	Load the low-risk demo scenario
+POST	/api/scenarios/elevated	Load the elevated-risk demo scenario
+POST	/api/scenarios/critical	Load the critical-risk demo scenario
+
+
+Start the backend and visit the interactive API
+docs to inspect the available request and
+response schemas.
+📊 What does the risk score mean?
 The current score is a demonstration index generated by heuristic
-logic. It is used to order sample encounters and demonstrate
-threshold-based alerts.
+logic. It helps order sample encounters and demonstrate threshold-based
+alerts.
 - It is not a calibrated collision probability.
-- It is not an official space-traffic-management risk classification.
-- Results depend on the sample data and current scoring rules.
-- Real-world use would require validated orbital elements, trajectory
-  propagation, closest-approach calculations, uncertainty analysis,
-  independent evaluation, and domain-expert review.
-🛰️ IBM LinuxONE: planned next step
-SPACEGUARD is being developed with a potential LinuxONE deployment in
-mind. The planned evaluation includes:
-- Hosting the FastAPI backend on a Linux environment.
-- Verifying Python dependencies and runtime compatibility.
-- Configuring secure network access and environment settings.
-- Testing API availability and frontend-to-backend connectivity.
-- Evaluating operational monitoring and deployment automation.
-No LinuxONE deployment or IBM service connection is claimed in this
-repository today. See the deployment guide for the intended next
-steps.
+- The categories are not official space-traffic-management
+  classifications.
+- Results depend on the included sample data and current scoring rules.
+- A real system would need validated orbital data, trajectory
+  propagation, closest-approach calculations, uncertainty modelling,
+  testing, and expert review.
+🛰️ IBM LinuxONE integration
+IBM LinuxONE is a planned deployment target. Its enterprise
+security, resilience, and scalability make it a platform worth
+evaluating for hosting the backend and future data-processing services.
+Planned work: - Verify Python dependency and runtime compatibility. -
+Deploy and test the FastAPI backend in an available LinuxONE
+environment. - Configure secure network access and environment
+variables. - Test frontend-to-backend connectivity and service
+availability. - Evaluate monitoring and deployment automation.
+This repository does not claim that SPACEGUARD is already deployed to
+LinuxONE or connected to IBM services. See
+[`linuxone/DEPLOYMENT.md`](linuxone/DEPLOYMENT.md) for deployment notes.
 🗺️ Roadmap
-- [ ] Connect to a trusted orbital-data source and show data
-  provenance/freshness.
+- [ ] Integrate a trusted orbital-data source and display data
+  freshness.
 - [ ] Implement validated orbital propagation and closest-approach
   calculations.
-- [ ] Evaluate a trained ML model only when suitable labelled data is
+- [ ] Evaluate a trained ML model when suitable labelled data is
   available.
-- [ ] Show uncertainty and explainability alongside scores.
-- [ ] Replace the demo login gate with secure authentication and
+- [ ] Display uncertainty and explanations alongside risk scores.
+- [ ] Replace the demo login screen with secure authentication and
   server-side authorization.
 - [ ] Add integration tests, CI checks, logging, and monitoring.
-- [ ] Deploy and test the backend on IBM LinuxONE, if access and
-  environment requirements are met.
+- [ ] Deploy and test on IBM LinuxONE if access and environment
+  requirements are met.
 🔐 Security and responsible use
-- The current login-style screen is a demo gate, not production
-  authentication.
-- Do not enter or commit real passwords, tokens, API keys, .env
-  files, SSH private keys, or credentials.
-- Do not treat prototype scores as real collision predictions.
-- Review the repository contents before making it public.
-📁 Repository layout
+- The login-style screen is a demo gate, not production authentication.
+- Never commit passwords, API keys, .env files, SSH private keys, or
+  credentials.
+- Do not use prototype scores for real collision-avoidance decisions.
+- Review files before making the repository public.
+📁 Project structure
 SPACEGUARD/
 ├── frontend/                 # React + TypeScript + 3D interface
 ├── backend/
 │   ├── app/
 │   │   ├── main.py           # FastAPI routes
-│   │   ├── data.py           # Demo data
+│   │   ├── data.py           # Synthetic demonstration data
 │   │   └── risk_engine.py    # Heuristic scoring logic
 │   ├── tests/                # Backend tests
 │   └── requirements.txt
 ├── linuxone/
-│   └── DEPLOYMENT.md         # Planned LinuxONE deployment notes
+│   └── DEPLOYMENT.md         # Planned deployment notes
 ├── .gitignore
 └── README.md
-🌱 Contributing
-Ideas, bug reports, and improvements are welcome.
-1. Create a feature branch.
-2. Make a focused change.
-3. Run the frontend build and backend tests.
-4. Open a pull request describing the change and how it was tested.
-📚 Open-source resources
+🔗 Open-source resources
 - React
 - TypeScript
 - Vite
@@ -258,16 +216,18 @@ Ideas, bug reports, and improvements are welcome.
 - Python
 - FastAPI
 - pytest
-The current prototype uses simulated orbital data; external orbital data
-services are not yet integrated.
+No external orbital dataset is currently integrated; the prototype uses
+simulated data.
+🤝 Contributing
+1. Create a feature branch.
+2. Make a focused change.
+3. Run the frontend build and backend tests.
+4. Open a pull request describing the change and tests performed.
 📄 License
-No license has been added yet. Until a license is included, reuse
-permissions are not explicitly granted. Add a suitable license file
-before inviting public reuse.
-::: {align="center"}
-**SPACEGUARD · IBM Datathon 2026 · `SSF2026`**
+A license has not yet been added. Until a license is included, reuse
+permissions are not explicitly granted.
+<div align="center">
 
-*Making orbital risk easier to see, understand, and prioritize.*
-:::
- 
- 
+SPACEGUARD · IBM Datathon 2026 · SSF2026
+Making orbital risk easier to see, understand, and prioritize.
+</div>
